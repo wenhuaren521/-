@@ -1,0 +1,595 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品集网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+        }
+        body {
+            background-color: #0c0c0e;
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+        .hero {
+            width: 100vw;
+            height: 100vh;
+            background-image: url("banner_bg.jpg");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.68);
+        }
+        .hero > * {
+            position: relative;
+            z-index: 2;
+        }
+        .top-left-logo {
+            position: absolute;
+            top: 22px;
+            left: 24px;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+        .hero-sub-title {
+            font-size: 13px;
+            color: #ddd;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .hero-main-title {
+            font-size: 52px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+        .hero-desc {
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 2.2;
+            text-align: center;
+        }
+        .scroll-tip {
+            position: absolute;
+            bottom: 36px;
+            font-size: 12px;
+            color: #bbb;
+        }
+        .case-section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-head {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section-head h2 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+        .section-head p {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+        .tab-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .tab {
+            padding: 7px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab.active {
+            border: 1px solid #fff;
+        }
+        .tab.unactive {
+            background: #222;
+            color: #aaa;
+        }
+        .case-wrap {
+            background-color: #171719;
+            border-radius: 12px;
+            margin-top: 35px;
+            padding: 32px;
+        }
+        .case-title {
+            font-size: 24px;
+            margin-bottom: 14px;
+        }
+        .tag-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: #2a2a2d;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #d1d1d1;
+        }
+        .case-item {
+            margin-bottom: 40px;
+        }
+        .case-intro {
+            font-size: 14px;
+            color: #b0b0b0;
+            margin-bottom: 28px;
+        }
+        .grid-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .img-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: zoom-in;
+            aspect-ratio: 16 / 9;
+        }
+        .img-item img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .img-item:hover img {
+            transform: scale(1.02);
+        }
+        .watermark-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            user-select: none;
+            overflow: hidden;
+        }
+        .water-text {
+            position: absolute;
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.21);
+            white-space: nowrap;
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            display: none;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox-wrap {
+            position: relative;
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            display: block;
+            object-fit: contain;
+        }
+        .lightbox-watermark {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        @media (max-width: 992px) {
+            .img-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .img-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-main-title {
+                font-size: 32px;
+            }
+            .case-wrap {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="hero">
+    <div class="top-left-logo">WEN HUA REN</div>
+    <div class="hero-sub-title">3DMAX MODELING · CR RENDERING</div>
+    <h1 class="hero-main-title">设计不是单纯制作效果图</h1>
+    <p class="hero-desc">而是营造空间的情绪<br>一种感觉与味道</p>
+    <div class="scroll-tip">SCROLL DOWN</div>
+</section>
+<section class="case-section">
+    <div class="section-head">
+        <h2>3DMAX建模CR渲染效果图作品</h2>
+        <p>家装案例 · 工装案例 · 室内空间效果图表现</p>
+        <div class="tab-group">
+            <div class="tab active" id="homeTab">家装案例</div>
+            <div class="tab unactive" id="workTab">工装案例</div>
+        </div>
+    </div>
+    <div class="case-wrap" id="homeCase">
+        <h3 class="case-title">家装案例</h3>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#现代简约</span>
+                <span class="tag">#法式卧室</span>
+                <span class="tag">#衣帽间</span>
+                <span class="tag">#主卫设计</span>
+                <span class="tag">#梳妆台</span>
+                <span class="tag">#空间分图</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例一｜现代简约家装</h4>
+            <p class="case-intro">以浅色、干净、通透为主，强调空间采光、收纳效率和日常居住舒适感，整体呈现安静清爽的现代居家氛围。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home1.jpg')">
+                    <img src="home1.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home2.jpg')">
+                    <img src="home2.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home3.jpg')">
+                    <img src="home3.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home4.jpg')">
+                    <img src="home4.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home5.jpg')">
+                    <img src="home5.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home6.jpg')">
+                    <img src="home6.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home7.jpg')">
+                    <img src="home7.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home8.jpg')">
+                    <img src="home8.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home9.jpg')">
+                    <img src="home9.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home10.jpg')">
+                    <img src="home10.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home11.jpg')">
+                    <img src="home11.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home12.jpg')">
+                    <img src="home12.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home13.jpg')">
+                    <img src="home13.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home14.jpg')">
+                    <img src="home14.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home15.jpg')">
+                    <img src="home15.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home16.jpg')">
+                    <img src="home16.jpg" alt="室内效果图">
+                    <div class="watermark-layer"></div>
+                </div>
+            </div>
+        </div>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#中古风</span>
+                <span class="tag">#复古客餐厅</span>
+                <span class="tag">#胡桃木卧室</span>
+                <span class="tag">#独立衣帽间</span>
+                <span class="tag">#干湿分离卫浴</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例二｜胡桃木复古中古风全屋</h4>
+            <p class="case-intro">深棕胡桃木为主基调，人字拼木地板，温润复古的中古风全屋设计，客餐厅、多款式主卧、衣帽间、双分离卫生间全套空间效果图。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <!--原先8张效果图-->
+                <div class="img-item" onclick="openLightbox('home17.png')">
+                    <img src="home17.png" alt="电竞榻榻米次卧">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home18.png')">
+                    <img src="home18.png" alt="复古客餐厅">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home19.png')">
+                    <img src="home19.png" alt="主卧‑款式A">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home20.png')">
+                    <img src="home20.png" alt="主卧‑款式B">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home21.png')">
+                    <img src="home21.png" alt="封闭式衣帽间">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home22.png')">
+                    <img src="home22.png" alt="淋浴卫生间">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home23.png')">
+                    <img src="home23.png" alt="双台盆洗漱区">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home24.png')">
+                    <img src="home24.png" alt="带飘窗主卧">
+                    <div class="watermark-layer"></div>
+                </div>
+                <!--新增上传的8张效果图 home25 ~ home32 -->
+                <div class="img-item" onclick="openLightbox('home25.png')">
+                    <img src="home25.png" alt="飘窗主卧">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home26.png')">
+                    <img src="home26.png" alt="卫生间A">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home27.png')">
+                    <img src="home27.png" alt="卫生间B">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home28.png')">
+                    <img src="home28.png" alt="电竞卧室">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home29.png')">
+                    <img src="home29.png" alt="衣柜储物次卧">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home30.png')">
+                    <img src="home30.png" alt="客餐厅视角1">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home31.png')">
+                    <img src="home31.png" alt="客餐厅视角2">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home32.png')">
+                    <img src="home32.png" alt="长廊过道">
+                    <div class="watermark-layer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="case-wrap" id="workCase" style="display:none;">
+        <h3 class="case-title">工装案例</h3>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#精品民宿酒店</span>
+                <span class="tag">#酒店双床客房</span>
+                <span class="tag">#圆床套房</span>
+                <span class="tag">#山林观景阳台</span>
+                <span class="tag">#原木风室内</span>
+                <span class="tag">#卫生间洗漱台</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例｜山林度假民宿全套客房空间</h4>
+            <p class="case-intro">度假风精品民宿酒店空间设计，包含投影双床房、豪华圆床套房、休闲客厅、观景露台、洗漱区等全套全景效果图，整体温润原木质感，搭配森系软装营造松弛度假氛围。</p>
+            <h4 class="grid-title">客房全景效果图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home37.jpg')">
+                    <img src="home37.jpg" alt="投影双床客房">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home38.jpg')">
+                    <img src="home38.jpg" alt="豪华圆床套房">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home39.jpg')">
+                    <img src="home39.jpg" alt="套房休闲起居区">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home40.jpg')">
+                    <img src="home40.jpg" alt="原木风观景卧室">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home41.jpg')">
+                    <img src="home41.jpg" alt="山林观景弧形阳台">
+                    <div class="watermark-layer"></div>
+                </div>
+                <!--新增15张工装效果图 home43 ~ home57-->
+                <div class="img-item" onclick="openLightbox('home43.jpg')">
+                    <img src="home43.jpg" alt="工装效果图43">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home44.jpg')">
+                    <img src="home44.jpg" alt="工装效果图44">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home45.jpg')">
+                    <img src="home45.jpg" alt="工装效果图45">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home46.jpg')">
+                    <img src="home46.jpg" alt="工装效果图46">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home47.jpg')">
+                    <img src="home47.jpg" alt="工装效果图47">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home48.jpg')">
+                    <img src="home48.jpg" alt="工装效果图48">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home49.jpg')">
+                    <img src="home49.jpg" alt="工装效果图49">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home50.jpg')">
+                    <img src="home50.jpg" alt="工装效果图50">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home51.jpg')">
+                    <img src="home51.jpg" alt="工装效果图51">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home52.jpg')">
+                    <img src="home52.jpg" alt="工装效果图52">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home53.jpg')">
+                    <img src="home53.jpg" alt="工装效果图53">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home54.jpg')">
+                    <img src="home54.jpg" alt="工装效果图54">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home55.jpg')">
+                    <img src="home55.jpg" alt="工装效果图55">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home56.jpg')">
+                    <img src="home56.jpg" alt="工装效果图56">
+                    <div class="watermark-layer"></div>
+                </div>
+                <div class="img-item" onclick="openLightbox('home57.jpg')">
+                    <img src="home57.jpg" alt="工装效果图57">
+                    <div class="watermark-layer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <div class="lightbox-wrap">
+        <img class="lightbox-img" id="lightboxImg" src="" alt="放大图片">
+        <div class="lightbox-watermark"></div>
+    </div>
+</div>
+<script>
+    const homeTab = document.getElementById("homeTab");
+    const workTab = document.getElementById("workTab");
+    const homeCase = document.getElementById("homeCase");
+    const workCase = document.getElementById("workCase");
+
+    homeTab.onclick = function () {
+        homeTab.classList.add("active");
+        workTab.classList.remove("active");
+        homeTab.classList.remove("unactive");
+        workTab.classList.add("unactive");
+        homeCase.style.display = "block";
+        workCase.style.display = "none";
+    };
+
+    workTab.onclick = function () {
+        workTab.classList.add("active");
+        homeTab.classList.remove("active");
+        workTab.classList.remove("unactive");
+        homeTab.classList.add("unactive");
+        workCase.style.display = "block";
+        homeCase.style.display = "none";
+    };
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+
+    function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.add("active");
+        makeWaterMark(document.querySelector('.lightbox-watermark'));
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove("active");
+        document.body.style.overflow = "auto";
+    }
+
+    lightboxImg.onclick = e => e.stopPropagation();
+
+    function makeWaterMark(container) {
+        container.innerHTML = '';
+        const gapX = 260;
+        const gapY = 90;
+        const text = "文画人设计";
+        const rows = 12;
+        const cols = 12;
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                let span = document.createElement('span');
+                span.className = 'water-text';
+                span.innerText = text;
+                span.style.left = x * gapX + 'px';
+                span.style.top = y * gapY + 'px';
+                container.appendChild(span);
+            }
+        }
+    }
+
+    document.querySelectorAll('.watermark-layer').forEach(item => {
+        makeWaterMark(item);
+    });
+</script>
+</body>
+</html>
