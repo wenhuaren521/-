@@ -1,0 +1,1097 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品集网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+        }
+        body {
+            background-color: #0c0c0e;
+            color: #ffffff;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+        /* 极淡暖橙背景光斑 */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(1000px 700px at 50% 35%, rgba(245, 158, 11, 0.04), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero {
+            width: 100vw;
+            height: 100vh;
+            background-image: url("banner_bg.jpg");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.68);
+        }
+        .hero > * {
+            position: relative;
+            z-index: 2;
+        }
+        .top-left-logo {
+            position: absolute;
+            top: 22px;
+            left: 24px;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+        .hero-sub-title {
+            font-size: 13px;
+            color: #ddd;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .hero-main-title {
+            font-size: 52px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+        .hero-desc {
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 2.2;
+            text-align: center;
+        }
+        .scroll-tip {
+            position: absolute;
+            bottom: 36px;
+            font-size: 12px;
+            color: #bbb;
+        }
+        .case-section {
+            padding: 260px 0 80px;
+            max-width: 1500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        /* 最外层毛玻璃大卡片 */
+        .outer-glass {
+            background-color: rgba(38, 32, 20, 0.28);
+            backdrop-filter: blur(40px) saturate(1.5);
+            -webkit-backdrop-filter: blur(40px) saturate(1.5);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 18px;
+            padding: 12px 12px 24px;
+            position: relative;
+            z-index: 11;
+        }
+        /* 边缘追光裁剪遮罩 —— 只在卡片边框内显示 */
+        .glow-mask {
+            position: absolute;
+            inset: -1px;
+            border-radius: 18px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 6;
+        }
+        .edge-glow {
+            position: absolute;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, rgba(255,248,230,0.35), rgba(255,220,150,0.15) 40%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            filter: blur(1.5px);
+            border-radius: 50%;
+        }
+        /* 固定背景层 —— 滚动到位置后固定，卡片在上面遮挡 */
+        .sticky-bg {
+            position: sticky;
+            top: 0;
+            height: 460px;
+            z-index: 1;
+        }
+        /* 橙黄渐变光晕 —— 在固定背景层内 */
+        .sticky-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 620px;
+            display: block;
+            background: radial-gradient(ellipse 95% 100% at center bottom,
+                rgba(255, 250, 235, 1) 0%,
+                rgba(255, 230, 130, 0.9) 15%,
+                rgba(252, 200, 70, 0.7) 30%,
+                rgba(240, 160, 40, 0.45) 48%,
+                rgba(210, 110, 25, 0.2) 65%,
+                rgba(170, 75, 12, 0.06) 82%,
+                transparent 95%);
+            filter: blur(18px);
+            -webkit-mask: conic-gradient(from 280deg at 50% 100%,
+                transparent 0deg,
+                rgba(0,0,0,0.014) 5deg,
+                rgba(0,0,0,0.057) 10deg,
+                rgba(0,0,0,0.126) 15deg,
+                rgba(0,0,0,0.216) 20deg,
+                rgba(0,0,0,0.323) 25deg,
+                rgba(0,0,0,0.439) 30deg,
+                rgba(0,0,0,0.561) 35deg,
+                rgba(0,0,0,0.677) 40deg,
+                rgba(0,0,0,0.784) 45deg,
+                rgba(0,0,0,0.874) 50deg,
+                rgba(0,0,0,0.943) 55deg,
+                rgba(0,0,0,0.986) 60deg,
+                black 65deg,
+                black 75deg,
+                rgba(0,0,0,0.986) 80deg,
+                rgba(0,0,0,0.943) 85deg,
+                rgba(0,0,0,0.874) 90deg,
+                rgba(0,0,0,0.784) 95deg,
+                rgba(0,0,0,0.677) 100deg,
+                rgba(0,0,0,0.561) 105deg,
+                rgba(0,0,0,0.439) 110deg,
+                rgba(0,0,0,0.323) 115deg,
+                rgba(0,0,0,0.216) 120deg,
+                rgba(0,0,0,0.126) 125deg,
+                rgba(0,0,0,0.057) 130deg,
+                rgba(0,0,0,0.014) 135deg,
+                transparent 140deg,
+                transparent 360deg);
+            mask: conic-gradient(from 280deg at 50% 100%,
+                transparent 0deg,
+                rgba(0,0,0,0.014) 5deg,
+                rgba(0,0,0,0.057) 10deg,
+                rgba(0,0,0,0.126) 15deg,
+                rgba(0,0,0,0.216) 20deg,
+                rgba(0,0,0,0.323) 25deg,
+                rgba(0,0,0,0.439) 30deg,
+                rgba(0,0,0,0.561) 35deg,
+                rgba(0,0,0,0.677) 40deg,
+                rgba(0,0,0,0.784) 45deg,
+                rgba(0,0,0,0.874) 50deg,
+                rgba(0,0,0,0.943) 55deg,
+                rgba(0,0,0,0.986) 60deg,
+                black 65deg,
+                black 75deg,
+                rgba(0,0,0,0.986) 80deg,
+                rgba(0,0,0,0.943) 85deg,
+                rgba(0,0,0,0.874) 90deg,
+                rgba(0,0,0,0.784) 95deg,
+                rgba(0,0,0,0.677) 100deg,
+                rgba(0,0,0,0.561) 105deg,
+                rgba(0,0,0,0.439) 110deg,
+                rgba(0,0,0,0.323) 115deg,
+                rgba(0,0,0,0.216) 120deg,
+                rgba(0,0,0,0.126) 125deg,
+                rgba(0,0,0,0.057) 130deg,
+                rgba(0,0,0,0.014) 135deg,
+                transparent 140deg,
+                transparent 360deg);
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 动态星空粒子容器 */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 620px;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        /* 尘埃粒子 —— 光束里缓慢漂浮 */
+        .dust-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 620px;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .dust {
+            position: absolute;
+            background: rgba(255, 220, 160, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255, 200, 120, 0.6);
+        }
+        /* Three.js 真正3D模型层 */
+        .three-container {
+            position: absolute;
+            top: 220px;
+            left: 0;
+            width: 100%;
+            height: 280px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.9;
+        }
+        .three-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: starFloat linear forwards;
+            opacity: 0;
+            --dx: 0px;
+        }
+        .star-bright {
+            box-shadow:
+                0 0 3px 1px rgba(255,255,255,0.9),
+                0 0 8px 2px rgba(255,225,160,0.6),
+                0 0 14px 4px rgba(255,190,100,0.3);
+        }
+        .star-medium {
+            box-shadow:
+                0 0 2px 1px rgba(255,255,255,0.7),
+                0 0 5px 1px rgba(255,220,150,0.4);
+        }
+        @keyframes starFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+            8% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(var(--dx), -520px) scale(0.3);
+                opacity: 0;
+            }
+        }
+        .outer-glass > .case-wrap {
+            position: relative;
+            z-index: 2;
+        }
+        /* 案例容器 —— 无背景，只负责切换显隐 */
+        .case-container {
+            margin-top: 10px;
+        }
+        /* 内层卡片 —— 不透光暗黑 + 厚毛玻璃透光边 */
+        .case-item {
+            position: relative;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(24px) saturate(1.4);
+            -webkit-backdrop-filter: blur(24px) saturate(1.4);
+            border-radius: 18px;
+            margin-bottom: 32px;
+        }
+        /* 内层不透光暗黑背景 */
+        .case-item::before {
+            content: "";
+            position: absolute;
+            inset: 14px;
+            background: #0f0f11;
+            border-radius: 8px;
+            z-index: 0;
+        }
+        .case-item > * {
+            position: relative;
+            z-index: 1;
+            margin-left: 16px;
+            margin-right: 16px;
+        }
+        .case-item > *:first-child {
+            margin-top: 6px;
+        }
+        .case-item > *:last-child {
+            margin-bottom: 6px;
+        }
+        .case-item .img-grid {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        /* 去掉家装案例标题 */
+        .case-title {
+            display: none;
+        }
+        .section-head {
+            text-align: center;
+            position: absolute;
+            top: 90px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        .section-head h2 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+        .section-head p {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+        .tab-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .tab {
+            padding: 7px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab.active {
+            border: 1px solid #fff;
+        }
+        .tab.unactive {
+            background: rgba(34, 34, 34, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .case-wrap {
+            margin: max(0px, calc((100% - 1320px) / 2)) auto 0;
+            max-width: 1320px;
+        }
+        .case-title {
+            font-size: 24px;
+            margin-bottom: 14px;
+        }
+        .tag-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            background: #2a2a2d;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #d1d1d1;
+        }
+        .case-item {
+            margin-bottom: 40px;
+        }
+        .case-intro {
+            font-size: 14px;
+            color: #b0b0b0;
+            margin-bottom: 28px;
+        }
+        .grid-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .img-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: zoom-in;
+            aspect-ratio: 16 / 9;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .img-item img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .img-item:hover img {
+            transform: scale(1.02);
+        }
+        .watermark-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            user-select: none;
+            overflow: hidden;
+        }
+        .water-text {
+            position: absolute;
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.21);
+            white-space: nowrap;
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            display: none;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox-wrap {
+            position: relative;
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            display: block;
+            object-fit: contain;
+        }
+        .lightbox-watermark {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        @media (max-width: 992px) {
+            .img-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .img-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-main-title {
+                font-size: 32px;
+            }
+            .case-wrap {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="hero">
+    <div class="top-left-logo">WEN HUA REN</div>
+    <div class="hero-sub-title">3DMAX MODELING · CR RENDERING</div>
+    <h1 class="hero-main-title">设计不是单纯制作效果图</h1>
+    <p class="hero-desc">而是营造空间的情绪<br>一种感觉与味道</p>
+    <div class="scroll-tip">SCROLL DOWN</div>
+</section>
+<section class="case-section">
+    <div class="sticky-bg">
+    <div class="section-head">
+        <h2>3DMAX建模CR渲染效果图作品</h2>
+        <p>家装案例 · 工装案例 · 室内空间效果图表现</p>
+        <div class="tab-group">
+            <div class="tab active" id="homeTab">家装案例</div>
+            <div class="tab unactive" id="workTab">工装案例</div>
+        </div>
+    </div>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="three-container" id="threeContainer"></div>
+    </div>
+    <div class="outer-glass">
+    <div class="case-wrap" id="homeCase">
+        <h3 class="case-title">家装案例</h3>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#现代意式轻奢</span>
+                <span class="tag">#别墅</span>
+                <span class="tag">#弧形吊顶</span>
+                <span class="tag">#网纹大理石</span>
+                <span class="tag">#家用电梯</span>
+                <span class="tag">#胡桃木饰面</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例五｜现代意式轻奢风别墅</h4>
+            <p class="case-intro">别墅级现代意式轻奢空间，弧形回光吊顶与深咖网纹大理石地面奠定优雅基调，胡桃木饰面、古铜金属与玻璃砖隔断交织，搭配家用电梯与弧形软装，呈现温润精致的高端居住体验。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home98.jpg')"><img src="home98.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home99.jpg')"><img src="home99.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home100.jpg')"><img src="home100.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home101.jpg')"><img src="home101.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home102.jpg')"><img src="home102.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home103.jpg')"><img src="home103.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home104.jpg')"><img src="home104.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home105.jpg')"><img src="home105.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home106.jpg')"><img src="home106.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home107.jpg')"><img src="home107.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home108.jpg')"><img src="home108.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home109.jpg')"><img src="home109.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home110.jpg')"><img src="home110.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home111.jpg')"><img src="home111.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home112.jpg')"><img src="home112.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home113.jpg')"><img src="home113.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home114.jpg')"><img src="home114.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home115.jpg')"><img src="home115.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home116.jpg')"><img src="home116.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home117.jpg')"><img src="home117.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home118.jpg')"><img src="home118.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home119.jpg')"><img src="home119.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home120.jpg')"><img src="home120.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home121.jpg')"><img src="home121.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home122.jpg')"><img src="home122.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home123.jpg')"><img src="home123.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home124.jpg')"><img src="home124.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home125.jpg')"><img src="home125.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home126.jpg')"><img src="home126.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home127.jpg')"><img src="home127.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home128.jpg')"><img src="home128.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home129.jpg')"><img src="home129.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home130.jpg')"><img src="home130.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home131.jpg')"><img src="home131.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home132.jpg')"><img src="home132.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home133.jpg')"><img src="home133.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home134.jpg')"><img src="home134.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home135.jpg')"><img src="home135.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home136.jpg')"><img src="home136.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home137.jpg')"><img src="home137.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home138.jpg')"><img src="home138.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home139.jpg')"><img src="home139.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home140.jpg')"><img src="home140.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home141.jpg')"><img src="home141.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#现代简约</span>
+                <span class="tag">#意式轻奢</span>
+                <span class="tag">#大理石</span>
+                <span class="tag">#金属线条</span>
+                <span class="tag">#无主灯</span>
+                <span class="tag">#高级灰</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例四｜现代简约意式轻奢风</h4>
+            <p class="case-intro">以高级灰与大理石质感为基底，融入金属线条与无主灯照明，简洁利落的现代骨架叠加意式轻奢的精致细节，呈现低调奢华的居家质感。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home58.jpg')"><img src="home58.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home59.jpg')"><img src="home59.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home60.jpg')"><img src="home60.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home61.jpg')"><img src="home61.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home62.jpg')"><img src="home62.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home63.jpg')"><img src="home63.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home64.jpg')"><img src="home64.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home65.jpg')"><img src="home65.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home66.jpg')"><img src="home66.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home67.jpg')"><img src="home67.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home68.jpg')"><img src="home68.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home69.jpg')"><img src="home69.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home70.jpg')"><img src="home70.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home71.jpg')"><img src="home71.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home72.jpg')"><img src="home72.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home73.jpg')"><img src="home73.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#现代意式轻奢</span>
+                <span class="tag">#大花白大理石</span>
+                <span class="tag">#深咖木饰面</span>
+                <span class="tag">#无主灯</span>
+                <span class="tag">#皮革沙发</span>
+                <span class="tag">#玻璃酒柜</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例三｜现代意式轻奢风</h4>
+            <p class="case-intro">以深咖木饰面与大花白大理石为核心材质，搭配无主灯照明、皮革模块沙发与玻璃酒柜暖光展示，墨绿大理石跳色点缀，呈现温润精致的现代意式轻奢居住空间。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home74.jpg')"><img src="home74.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home75.jpg')"><img src="home75.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home76.jpg')"><img src="home76.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home77.jpg')"><img src="home77.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home78.jpg')"><img src="home78.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home79.jpg')"><img src="home79.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home80.jpg')"><img src="home80.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home81.jpg')"><img src="home81.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home82.jpg')"><img src="home82.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home83.jpg')"><img src="home83.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home84.jpg')"><img src="home84.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home85.jpg')"><img src="home85.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home86.jpg')"><img src="home86.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home87.jpg')"><img src="home87.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home88.jpg')"><img src="home88.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home89.jpg')"><img src="home89.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home90.jpg')"><img src="home90.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home91.jpg')"><img src="home91.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home92.jpg')"><img src="home92.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home93.jpg')"><img src="home93.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home94.jpg')"><img src="home94.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home95.jpg')"><img src="home95.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home96.jpg')"><img src="home96.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home97.jpg')"><img src="home97.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#中古风</span>
+                <span class="tag">#复古客餐厅</span>
+                <span class="tag">#胡桃木卧室</span>
+                <span class="tag">#独立衣帽间</span>
+                <span class="tag">#干湿分离卫浴</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例二｜胡桃木复古中古风全屋</h4>
+            <p class="case-intro">深棕胡桃木为主基调，人字拼木地板，温润复古的中古风全屋设计，客餐厅、多款式主卧、衣帽间、双分离卫生间全套空间效果图。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home17.png')"><img src="home17.png" alt="电竞榻榻米次卧"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home18.png')"><img src="home18.png" alt="复古客餐厅"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home19.png')"><img src="home19.png" alt="主卧‑款式A"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home20.png')"><img src="home20.png" alt="主卧‑款式B"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home21.png')"><img src="home21.png" alt="封闭式衣帽间"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home22.png')"><img src="home22.png" alt="淋浴卫生间"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home23.png')"><img src="home23.png" alt="双台盆洗漱区"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home24.png')"><img src="home24.png" alt="带飘窗主卧"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home25.png')"><img src="home25.png" alt="飘窗主卧"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home26.png')"><img src="home26.png" alt="卫生间A"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home27.png')"><img src="home27.png" alt="卫生间B"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home28.png')"><img src="home28.png" alt="电竞卧室"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home29.png')"><img src="home29.png" alt="衣柜储物次卧"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home30.png')"><img src="home30.png" alt="客餐厅视角1"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home31.png')"><img src="home31.png" alt="客餐厅视角2"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home32.png')"><img src="home32.png" alt="长廊过道"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#美式田园</span>
+                <span class="tag">#碎花软装</span>
+                <span class="tag">#原木家具</span>
+                <span class="tag">#复古壁炉</span>
+                <span class="tag">#布艺沙发</span>
+                <span class="tag">#白色护墙板</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例一｜美式田园风家装</h4>
+            <p class="case-intro">以温暖原木与奶白色调为基底，搭配碎花布艺、复古壁炉与白色护墙板，营造自然松弛、温馨治愈的美式田园居家氛围。</p>
+            <h4 class="grid-title">空间分图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home1.jpg')"><img src="home1.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home2.jpg')"><img src="home2.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home3.jpg')"><img src="home3.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home4.jpg')"><img src="home4.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home5.jpg')"><img src="home5.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home6.jpg')"><img src="home6.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home7.jpg')"><img src="home7.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home8.jpg')"><img src="home8.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home9.jpg')"><img src="home9.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home10.jpg')"><img src="home10.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home11.jpg')"><img src="home11.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home12.jpg')"><img src="home12.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home13.jpg')"><img src="home13.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home14.jpg')"><img src="home14.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home15.jpg')"><img src="home15.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home16.jpg')"><img src="home16.jpg" alt="室内效果图"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+    </div>
+    <div class="case-wrap" id="workCase" style="display:none;">
+        <h3 class="case-title">工装案例</h3>
+        <div class="case-item">
+            <div class="tag-row">
+                <span class="tag">#精品民宿酒店</span>
+                <span class="tag">#酒店双床客房</span>
+                <span class="tag">#圆床套房</span>
+                <span class="tag">#山林观景阳台</span>
+                <span class="tag">#原木风室内</span>
+                <span class="tag">#卫生间洗漱台</span>
+            </div>
+            <h4 style="margin-bottom:8px;">案例｜山林度假民宿全套客房空间</h4>
+            <p class="case-intro">度假风精品民宿酒店空间设计，包含投影双床房、豪华圆床套房、休闲客厅、观景露台、洗漱区等全套全景效果图，整体温润原木质感，搭配森系软装营造松弛度假氛围。</p>
+            <h4 class="grid-title">客房全景效果图展示</h4>
+            <div class="img-grid">
+                <div class="img-item" onclick="openLightbox('home37.jpg')"><img src="home37.jpg" alt="投影双床客房"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home38.jpg')"><img src="home38.jpg" alt="豪华圆床套房"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home39.jpg')"><img src="home39.jpg" alt="套房休闲起居区"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home40.jpg')"><img src="home40.jpg" alt="原木风观景卧室"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home41.jpg')"><img src="home41.jpg" alt="山林观景弧形阳台"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home43.jpg')"><img src="home43.jpg" alt="工装效果图43"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home44.jpg')"><img src="home44.jpg" alt="工装效果图44"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home45.jpg')"><img src="home45.jpg" alt="工装效果图45"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home46.jpg')"><img src="home46.jpg" alt="工装效果图46"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home47.jpg')"><img src="home47.jpg" alt="工装效果图47"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home48.jpg')"><img src="home48.jpg" alt="工装效果图48"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home49.jpg')"><img src="home49.jpg" alt="工装效果图49"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home50.jpg')"><img src="home50.jpg" alt="工装效果图50"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home51.jpg')"><img src="home51.jpg" alt="工装效果图51"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home52.jpg')"><img src="home52.jpg" alt="工装效果图52"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home53.jpg')"><img src="home53.jpg" alt="工装效果图53"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home54.jpg')"><img src="home54.jpg" alt="工装效果图54"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home55.jpg')"><img src="home55.jpg" alt="工装效果图55"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home56.jpg')"><img src="home56.jpg" alt="工装效果图56"><div class="watermark-layer"></div></div>
+                <div class="img-item" onclick="openLightbox('home57.jpg')"><img src="home57.jpg" alt="工装效果图57"><div class="watermark-layer"></div></div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <div class="lightbox-wrap">
+        <img class="lightbox-img" id="lightboxImg" src="" alt="放大图片">
+        <div class="lightbox-watermark"></div>
+    </div>
+</div>
+<script>
+    const homeTab = document.getElementById("homeTab");
+    const workTab = document.getElementById("workTab");
+    const homeCase = document.getElementById("homeCase");
+    const workCase = document.getElementById("workCase");
+    homeTab.onclick = function () {
+        homeTab.classList.add("active");
+        workTab.classList.remove("active");
+        homeTab.classList.remove("unactive");
+        workTab.classList.add("unactive");
+        homeCase.style.display = "block";
+        workCase.style.display = "none";
+    };
+    workTab.onclick = function () {
+        workTab.classList.add("active");
+        homeTab.classList.remove("active");
+        workTab.classList.remove("unactive");
+        homeTab.classList.add("unactive");
+        workCase.style.display = "block";
+        homeCase.style.display = "none";
+    };
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.add("active");
+        makeWaterMark(document.querySelector('.lightbox-watermark'));
+        document.body.style.overflow = "hidden";
+    }
+    function closeLightbox() {
+        lightbox.classList.remove("active");
+        document.body.style.overflow = "auto";
+    }
+    lightboxImg.onclick = e => e.stopPropagation();
+    function makeWaterMark(container) {
+        container.innerHTML = '';
+        const gapX = 260;
+        const gapY = 90;
+        const text = "文画人设计+V：or521521521";
+        const rows = 12;
+        const cols = 12;
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                let span = document.createElement('span');
+                span.className = 'water-text';
+                span.innerText = text;
+                span.style.left = x * gapX + 'px';
+                span.style.top = y * gapY + 'px';
+                container.appendChild(span);
+            }
+        }
+    }
+    document.querySelectorAll('.watermark-layer').forEach(item => {
+        makeWaterMark(item);
+    });
+
+    /* 动态星空粒子 —— 从底部发光处发射，慢速度上飘，到顶部消失 */
+    const starsContainer = document.getElementById("starsContainer");
+    function createStar() {
+        const star = document.createElement('div');
+        star.className = 'star';
+        // 从发光中心附近发射（left 42-58%）
+        const leftPos = 42 + Math.random() * 16;
+        star.style.left = leftPos + '%';
+        star.style.bottom = '0';
+        // 随机大小
+        const size = Math.random() * 2 + 0.8;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        // 随机速度（慢，5-10秒）
+        const duration = 5 + Math.random() * 5;
+        star.style.animationDuration = duration + 's';
+        // 随机延迟
+        star.style.animationDelay = Math.random() * 0.5 + 's';
+        // 水平发散方向：随机向左或向右，-280~280px
+        const dx = (Math.random() - 0.5) * 560;
+        star.style.setProperty('--dx', dx + 'px');
+        // 30%亮星带星芒，40%中等星芒，30%普通
+        const r = Math.random();
+        if (r > 0.7) {
+            star.classList.add('star-bright');
+        } else if (r > 0.3) {
+            star.classList.add('star-medium');
+        }
+        starsContainer.appendChild(star);
+        // 动画结束后移除
+        setTimeout(() => star.remove(), duration * 1000 + 1000);
+    }
+    // 初始生成一批
+    for (let i = 0; i < 25; i++) {
+        setTimeout(createStar, i * 150);
+    }
+    // 持续生成，每250ms一颗
+    setInterval(createStar, 250);
+
+    /* 尘埃粒子 —— 光束里缓慢漂浮，像阳光照进房间的浮尘 */
+    (function () {
+        const starsEl = document.getElementById('starsContainer');
+        if (!starsEl) return;
+        const dustBox = document.createElement('div');
+        dustBox.className = 'dust-container';
+        starsEl.parentNode.insertBefore(dustBox, starsEl.nextSibling);
+        const dustList = [];
+        for (let i = 0; i < 45; i++) {
+            const d = document.createElement('div');
+            d.className = 'dust';
+            const size = Math.random() * 1.5 + 0.6;
+            d.style.width = size + 'px';
+            d.style.height = size + 'px';
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            d.style.left = x + '%';
+            d.style.top = y + '%';
+            d.style.opacity = (Math.random() * 0.4 + 0.2).toFixed(2);
+            dustBox.appendChild(d);
+            dustList.push({
+                el: d, x: x, y: y,
+                vx: (Math.random() - 0.5) * 0.018,
+                vy: (Math.random() - 0.5) * 0.012,
+                phase: Math.random() * Math.PI * 2,
+                phaseSpeed: Math.random() * 0.015 + 0.005
+            });
+        }
+        function tickDust() {
+            dustList.forEach(function (p) {
+                p.phase += p.phaseSpeed;
+                p.x += p.vx + Math.sin(p.phase) * 0.012;
+                p.y += p.vy + Math.cos(p.phase * 0.8) * 0.008;
+                if (p.x < -2) p.x = 102;
+                if (p.x > 102) p.x = -2;
+                if (p.y < -2) p.y = 102;
+                if (p.y > 102) p.y = -2;
+                p.el.style.left = p.x + '%';
+                p.el.style.top = p.y + '%';
+            });
+            requestAnimationFrame(tickDust);
+        }
+        tickDust();
+    })();
+
+    /* 毛玻璃卡片边缘追光 —— 始终贴合边框，转弯不越界 */
+    (function () {
+        const card = document.querySelector('.outer-glass');
+        if (!card) return;
+        const mask = document.createElement('div');
+        mask.className = 'glow-mask';
+        card.appendChild(mask);
+        const glow = document.createElement('div');
+        glow.className = 'edge-glow';
+        mask.appendChild(glow);
+        const THRESHOLD = 70;
+        const GLOW_LEN = 140;
+        const GLOW_WID = 10;
+        const CORNER_R = 18; // 角落圆角过渡范围
+
+        document.addEventListener('mousemove', function (e) {
+            const rect = card.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const w = rect.width;
+            const h = rect.height;
+
+            // 4条边的投影点（clamp在边范围内，不越界）
+            const topX = Math.max(0, Math.min(w, mx));
+            const botX = Math.max(0, Math.min(w, mx));
+            const lefY = Math.max(0, Math.min(h, my));
+            const rigY = Math.max(0, Math.min(h, my));
+
+            const dTop = Math.hypot(mx - topX, my);
+            const dBot = Math.hypot(mx - botX, my - h);
+            const dLef = Math.hypot(mx, my - lefY);
+            const dRig = Math.hypot(mx - w, my - rigY);
+            const minD = Math.min(dTop, dBot, dLef, dRig);
+
+            if (minD > THRESHOLD) {
+                glow.style.opacity = 0;
+                return;
+            }
+            glow.style.opacity = Math.min(0.7, (1 - minD / THRESHOLD) * 0.8);
+
+            let px, py, gw, gh, rot = 0;
+            if (minD === dTop) {
+                px = topX; py = 0; gw = GLOW_LEN; gh = GLOW_WID;
+            } else if (minD === dBot) {
+                px = botX; py = h; gw = GLOW_LEN; gh = GLOW_WID;
+            } else if (minD === dLef) {
+                px = 0; py = lefY; gw = GLOW_WID; gh = GLOW_LEN;
+            } else {
+                px = w; py = rigY; gw = GLOW_WID; gh = GLOW_LEN;
+            }
+
+            // 角落处旋转45度贴合转弯
+            const distCorner = Math.min(
+                Math.hypot(px, py),
+                Math.hypot(px - w, py),
+                Math.hypot(px, py - h),
+                Math.hypot(px - w, py - h)
+            );
+            if (distCorner < CORNER_R) {
+                rot = 45;
+                gw = gh = GLOW_WID * 2;
+            }
+
+            glow.style.left = (px - gw / 2) + 'px';
+            glow.style.top = (py - gh / 2) + 'px';
+            glow.style.width = gw + 'px';
+            glow.style.height = gh + 'px';
+            glow.style.transform = 'rotate(' + rot + 'deg)';
+        });
+    })();
+
+    /* Three.js 真正3D模型 —— 光滑曲面+光照+鼠标跟踪 */
+    (function () {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
+        script.onload = initThree;
+        document.head.appendChild(script);
+
+        function initThree() {
+            const container = document.getElementById('threeContainer');
+            if (!container) return;
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+            camera.position.set(0, 0, 6.5);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(w, h);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // 光照 —— 光源从下方来，模型底部最亮，模拟光晕上打
+            const ambient = new THREE.AmbientLight(0xfff0d8, 0.5);
+            scene.add(ambient);
+            // 主光从下方照射，模型底部最亮
+            const keyLight = new THREE.DirectionalLight(0xfff0d0, 1.2);
+            keyLight.position.set(2, -6, 4);
+            scene.add(keyLight);
+            const fillLight = new THREE.DirectionalLight(0xffeedd, 0.25);
+            fillLight.position.set(-4, 3, -3);
+            scene.add(fillLight);
+            // 底部光晕光源 —— 从下往上打暖橙光，模拟渐变光晕照亮模型底部
+            const glowLight = new THREE.PointLight(0xffb347, 5.0, 15);
+            glowLight.position.set(0, -2.5, 2);
+            scene.add(glowLight);
+
+            // 白膜材质
+            const clayMat = new THREE.MeshStandardMaterial({
+                color: 0xe8e8e8,
+                roughness: 0.65,
+                metalness: 0.05
+            });
+            // 眼睛材质 —— 白色带自发光
+            const eyeMat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0x666666,
+                roughness: 0.2
+            });
+            const eyeGeo = new THREE.CapsuleGeometry(0.045, 0.07, 8, 16);
+
+            function makeEyes(parent, z, yOff, spacing) {
+                const eL = new THREE.Mesh(eyeGeo, eyeMat);
+                eL.position.set(-spacing, yOff, z);
+                const eR = new THREE.Mesh(eyeGeo, eyeMat);
+                eR.position.set(spacing, yOff, z);
+                parent.add(eL, eR);
+            }
+
+            // 立方体
+            const cubeGroup = new THREE.Group();
+            const cube = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.3, 1.3), clayMat);
+            cubeGroup.add(cube);
+            makeEyes(cubeGroup, 0.66, 0, 0.28);
+            cubeGroup.position.set(-2.3, -0.45, 0);
+            cubeGroup.rotation.set(-0.3, -0.5, 0);
+            scene.add(cubeGroup);
+
+            // 球体 —— 光滑曲面32段
+            const sphereGroup = new THREE.Group();
+            const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.75, 48, 48), clayMat);
+            sphereGroup.add(sphere);
+            makeEyes(sphereGroup, 0.68, 0.05, 0.22);
+            sphereGroup.position.set(0, 0.7, 0);
+            scene.add(sphereGroup);
+
+            // 圆锥 —— 光滑曲面32段
+            const coneGroup = new THREE.Group();
+            const cone = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.35, 48), clayMat);
+            coneGroup.add(cone);
+            makeEyes(coneGroup, 0.58, -0.15, 0.2);
+            coneGroup.position.set(2.3, -0.4, 0);
+            scene.add(coneGroup);
+
+            const groups = [cubeGroup, sphereGroup, coneGroup];
+            const baseRot = [
+                { x: -0.3, y: -0.5 },
+                { x: 0, y: 0 },
+                { x: 0, y: 0 }
+            ];
+            let mouseX = 0, mouseY = 0;
+
+            document.addEventListener('mousemove', function (e) {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                groups.forEach(function (g, i) {
+                    g.rotation.y = baseRot[i].y + mouseX * 2.5;
+                    g.rotation.x = baseRot[i].x - mouseY * 1.8;
+                });
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', function () {
+                const nw = container.clientWidth;
+                const nh = container.clientHeight;
+                camera.aspect = nw / nh;
+                camera.updateProjectionMatrix();
+                renderer.setSize(nw, nh);
+            });
+        }
+    })();
+</script>
+</body>
+</html>
